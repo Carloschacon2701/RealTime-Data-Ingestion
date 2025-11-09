@@ -16,8 +16,6 @@ resource "aws_iam_role" "stream_raw_to_s3" {
   name_prefix           = null
   path                  = "/"
   permissions_boundary  = null
-  tags                  = {}
-  tags_all              = {}
 
 }
 

@@ -1,22 +1,11 @@
 
 resource "aws_dynamodb_table" "this" {
-  billing_mode                = "PAY_PER_REQUEST"
-  deletion_protection_enabled = false
-  hash_key                    = "transactionId"
-  name                        = "AbnormalityTable"
-  range_key                   = "createdAt"
-  read_capacity               = 0
-  region                      = "us-east-1"
-  restore_date_time           = null
-  restore_source_name         = null
-  restore_source_table_arn    = null
-  restore_to_latest_time      = null
-  stream_enabled              = false
-  stream_view_type            = null
-  table_class                 = "STANDARD"
-  tags                        = {}
-  tags_all                    = {}
-  write_capacity              = 0
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "transactionId"
+  name           = "AbnormalityTable"
+  range_key      = "createdAt"
+  read_capacity  = 0
+  write_capacity = 0
   attribute {
     name = "createdAt"
     type = "S"
@@ -26,8 +15,49 @@ resource "aws_dynamodb_table" "this" {
     type = "S"
   }
 
-  ttl {
-    attribute_name = null
-    enabled        = false
-  }
 }
+
+
+# resource "aws_dynamodb_table" "basic-dynamodb-table" {
+#   name           = "GameScores"
+#   billing_mode   = "PROVISIONED"
+#   read_capacity  = 20
+#   write_capacity = 20
+#   hash_key       = "UserId"
+#   range_key      = "GameTitle"
+
+#   attribute {
+#     name = "UserId"
+#     type = "S"
+#   }
+
+#   attribute {
+#     name = "GameTitle"
+#     type = "S"
+#   }
+
+#   attribute {
+#     name = "TopScore"
+#     type = "N"
+#   }
+
+#   ttl {
+#     attribute_name = "TimeToExist"
+#     enabled        = true
+#   }
+
+#   global_secondary_index {
+#     name               = "GameTitleIndex"
+#     hash_key           = "GameTitle"
+#     range_key          = "TopScore"
+#     write_capacity     = 10
+#     read_capacity      = 10
+#     projection_type    = "INCLUDE"
+#     non_key_attributes = ["UserId"]
+#   }
+
+#   tags = {
+#     Name        = "dynamodb-table-1"
+#     Environment = "production"
+#   }
+# }
