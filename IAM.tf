@@ -94,3 +94,91 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution_policy" {
   role       = aws_iam_role.lambda_fanout_function.name
 }
 
+##################
+# Lambda Fanout Permissions
+##################
+resource "aws_iam_policy" "lambda_fanout_permissions" {
+  name = "LambdaFanoutAccess"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "AllowPublishToAbnormalTopic"
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
+        Resource = aws_sns_topic.this.arn
+      },
+      {
+        Sid    = "AllowReadWriteToAbnormalTable"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:BatchWriteItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:UpdateItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:BatchGetItem"
+        ]
+        Resource = [
+          aws_dynamodb_table.this.arn,
+          "${aws_dynamodb_table.this.arn}/index/*"
+        ]
+      }
+    ]
+  })
+}
+
+##################
+# Lambda Fanout Execution Role Policy Attachment
+##################
+resource "aws_iam_role_policy_attachment" "lambda_fanout_permissions" {
+  policy_arn = aws_iam_policy.lambda_fanout_permissions.arn
+  role       = aws_iam_role.lambda_fanout_function.name
+}
+
+##################
+# Kinesis Analytics Execution Role
+##################
+resource "aws_iam_role" "kinesis_analytics_execution_role" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "kinesisanalytics.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+  description = "Allows Kinesis Analytics to call AWS services on your behalf."
+  name        = "KinesisAnalyticsExecutionRole"
+  path        = "/"
+}
+
+##################
+# Kinesis Analytics Execution Role Policy 
+##################
+resource "aws_iam_policy" "kinesis_analytics_execution_role" {
+  name = "KinesisAnalyticsExecutionRole"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action   = ["kinesis:*", "lambda:*"]
+      Effect   = "Allow"
+      Resource = [aws_lambda_function.this.arn, aws_kinesis_stream.this.arn]
+    }]
+  })
+}
+
+##################
+# Kinesis Analytics Execution Role Policy Attachment
+##################
+resource "aws_iam_role_policy_attachment" "kinesis_analytics_execution_role" {
+  policy_arn = aws_iam_policy.kinesis_analytics_execution_role.arn
+  role       = aws_iam_role.kinesis_analytics_execution_role.name
+}
+

@@ -45,3 +45,5 @@ resource "aws_kinesis_firehose_delivery_stream" "stream_raw_to_s3" {
   depends_on = [aws_kinesis_stream.this, aws_iam_role.stream_raw_to_s3, aws_iam_policy.stream_raw_to_s3, aws_s3_bucket.stream_raw_to_s3]
 }
 
+
+
