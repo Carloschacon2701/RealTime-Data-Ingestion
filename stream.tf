@@ -1,5 +1,8 @@
 
 
+##################
+# User Transaction Kinesis Stream
+##################
 resource "aws_kinesis_stream" "this" {
   encryption_type        = "NONE"
   max_record_size_in_kib = 1024
@@ -11,6 +14,9 @@ resource "aws_kinesis_stream" "this" {
   }
 }
 
+##################
+# Firehose Stream To Raw S3
+##################
 resource "aws_kinesis_firehose_delivery_stream" "stream_raw_to_s3" {
   destination = "extended_s3"
   name        = "StreamRawToS3"

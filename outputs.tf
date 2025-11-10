@@ -1,3 +1,6 @@
+##################
+# Core Stream Outputs
+##################
 output "kinesis_stream_name" {
   description = "Name of the Kinesis data stream that ingests raw user transactions."
   value       = aws_kinesis_stream.this.name
